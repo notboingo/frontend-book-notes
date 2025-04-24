@@ -6,8 +6,11 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
+  const BASE_URL = 'https://book-notes-backend-bc06.onrender.com'; // Use your actual Render backend URL
+
+  // Load all notes on page load
   useEffect(() => {
-    fetch('http://localhost:8080/notes')
+    fetch(`${BASE_URL}/notes`)
       .then(res => res.json())
       .then(data => {
         console.log("All notes loaded:", data);
@@ -16,6 +19,7 @@ function App() {
       .catch(err => console.error("Error loading notes:", err));
   }, []);
 
+  // Fetch note content by ID
   const fetchNoteContent = (id) => {
     if (!id) {
       console.warn("Invalid note ID passed to fetchNoteContent:", id);
@@ -23,7 +27,7 @@ function App() {
     }
 
     console.log("Fetching content for note ID:", id);
-    fetch(`http://localhost:8080/notes/${id}`)
+    fetch(`${BASE_URL}/notes/${id}`)
       .then(res => res.json())
       .then(data => {
         console.log("Fetched note content:", data);
@@ -32,6 +36,7 @@ function App() {
       .catch(err => console.error("Error fetching note content:", err));
   };
 
+  // Handle search
   const handleSearch = () => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
@@ -39,7 +44,7 @@ function App() {
     }
 
     console.log("Searching for:", searchQuery);
-    fetch(`http://localhost:8080/search?q=${searchQuery}`)
+    fetch(`${BASE_URL}/search?q=${searchQuery}`)
       .then(res => res.json())
       .then(data => {
         console.log("Search results:", data.results);
@@ -48,6 +53,7 @@ function App() {
       .catch(err => console.error("Search error:", err));
   };
 
+  // List rendering helper
   const renderNoteList = (noteList) => (
     <ul style={{ listStyle: 'none', padding: 0 }}>
       {noteList.map(note => (
