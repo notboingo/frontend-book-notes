@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+fetch(`${process.env.REACT_APP_API_URL}/notes`)
+
 
 function App() {
   const [notes, setNotes] = useState([]);
