@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-fetch(`${process.env.REACT_APP_API_URL}/notes`)
-
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -8,7 +6,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
-  const BASE_URL = 'https://book-notes-backend-bc06.onrender.com'; // Use your actual Render backend URL
+  const BASE_URL = process.env.REACT_APP_API_URL || 'https://book-notes-backend-bc06.onrender.com'; // Use your actual Render backend URL
 
   // Load all notes on page load
   useEffect(() => {
