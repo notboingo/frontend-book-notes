@@ -6,11 +6,8 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
-  const BASE_URL = process.env.REACT_APP_API_URL || 'https://book-notes-backend-bc06.onrender.com'; // Use your actual Render backend URL
-
-  // Load all notes on page load
   useEffect(() => {
-    fetch(`${BASE_URL}/notes`)
+    fetch('https://fastapi-book-backend.onrender.com/notes') // Make sure backend is on this URL
       .then(res => res.json())
       .then(data => {
         console.log("All notes loaded:", data);
@@ -19,15 +16,14 @@ function App() {
       .catch(err => console.error("Error loading notes:", err));
   }, []);
 
-  // Fetch note content by ID
-  const fetchNoteContent = (id) => {
-    if (!id) {
-      console.warn("Invalid note ID passed to fetchNoteContent:", id);
+  const fetchNoteContent = (note_id) => {
+    if (!note_id) {
+      console.warn("Invalid note ID passed to fetchNoteContent:", note_id);
       return;
     }
 
-    console.log("Fetching content for note ID:", id);
-    fetch(`${BASE_URL}/notes/${id}`)
+    console.log("Fetching content for note ID:", note_id);
+    fetch(`https://fastapi-book-backend.onrender.com/notes/${note_id}`) // Note content fetch URL
       .then(res => res.json())
       .then(data => {
         console.log("Fetched note content:", data);
@@ -36,7 +32,6 @@ function App() {
       .catch(err => console.error("Error fetching note content:", err));
   };
 
-  // Handle search
   const handleSearch = () => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
@@ -44,7 +39,7 @@ function App() {
     }
 
     console.log("Searching for:", searchQuery);
-    fetch(`${BASE_URL}/search?q=${searchQuery}`)
+    fetch(`https://fastapi-book-backend.onrender.com/search?q=${searchQuery}`) // Search fetch URL
       .then(res => res.json())
       .then(data => {
         console.log("Search results:", data.results);
@@ -53,21 +48,27 @@ function App() {
       .catch(err => console.error("Search error:", err));
   };
 
-  // List rendering helper
   const renderNoteList = (noteList) => (
     <ul style={{ listStyle: 'none', padding: 0 }}>
-      {noteList.map(note => (
-        <li
-          key={note.id}
-          onClick={() => {
-            console.log("Note clicked:", note);
-            fetchNoteContent(note.id);
-          }}
-          style={{ cursor: 'pointer', marginBottom: '10px' }}
-        >
-          {note.title}
-        </li>
-      ))}
+      {noteList.map(note => {
+        console.log("Note object", note); // Log the note object to verify structure
+        return (
+          <li
+            key={note.note_id} // Use note.note_id instead of note.id
+            onClick={() => {
+              console.log("Note clicked:", note);
+              if (note.note_id) { // Check for note_id instead of id
+                fetchNoteContent(note.note_id); // Only call fetch if note_id is valid
+              } else {
+                console.warn("Note ID is missing or invalid:", note);
+              }
+            }}
+            style={{ cursor: 'pointer', marginBottom: '10px' }}
+          >
+            {note.title}
+          </li>
+        );
+      })}
     </ul>
   );
 
